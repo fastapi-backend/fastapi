@@ -85,7 +85,9 @@ typing-extensions==4.12.2
     #   pydantic-core
     #   typer
 uvicorn[standard]==0.30.4
-    # via fastapi
+    # via
+    #   -r requirements.in
+    #   fastapi
 watchfiles==0.22.0
     # via uvicorn
 websockets==12.0
