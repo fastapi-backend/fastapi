@@ -1,15 +1,22 @@
-from fastapi import APIRouter, Depends
+from fastapi import Depends, FastAPI, HTTPException, APIRouter
 from sqlalchemy.orm import Session
 
-
-from controllers.users import get_users
-from model.database import get_db
-
-
+from model import crud, core, schemas
+from model.database import SessionLocal, engine
+core.Base.metadata.create_all(bind=engine)
 router = APIRouter()
 
 
-@router.get("/",)
-def read_users(skip: int = 0, db: Session = Depends(get_db)):
-    users = get_users(db,skip=skip)
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@router.get("/users/", response_model=list[schemas.User])
+def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_users(db, skip=skip, limit=limit)
     return users
