@@ -3,3 +3,5 @@ uvicorn[standard]
 sqlalchemy
 psycopg2
 alembic
+passlib
+bcrypt
