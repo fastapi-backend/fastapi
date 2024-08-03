@@ -5,7 +5,7 @@ from starlette.status import HTTP_400_BAD_REQUEST
 
 from model.core import User
 from model.schemas import UserCreate
-from secure import  pwd_context
+from secure import pwd_context
 
 
 def register(db: Session, user_data: UserCreate):

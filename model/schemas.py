@@ -36,6 +36,13 @@ class LiteUser(UserBase):
         orm_mode = True
 
 
+class Token(BaseModel):
+    access_token: str
+
+    class Config:
+        orm_mode = True
+
+
 class User(UserBase):
     id: int
     is_active: bool
