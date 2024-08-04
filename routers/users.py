@@ -11,7 +11,6 @@ from model import crud, core, schemas
 from model.core import User
 from model.database import SessionLocal, engine
 from secure import pwd_context, oauth2_schema
-from typing import Annotated
 
 from views.users import get_user_by_token
 
