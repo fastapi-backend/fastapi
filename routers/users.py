@@ -8,13 +8,12 @@ from sqlalchemy.orm import Session
 from controllers import token
 from controllers.token import get_current_user
 from controllers.users import register
-from model import crud, core, schemas
+from model import crud, schemas
 from model.core import User
-from model.database import SessionLocal, engine
-from secure import pwd_context, oauth2_schema
+from model.database import SessionLocal
+from secure import pwd_context
 
 
-core.Base.metadata.create_all(bind=engine)
 router = APIRouter()
 
 

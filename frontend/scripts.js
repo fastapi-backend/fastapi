@@ -37,9 +37,14 @@ const error_notfound = () => {
 }
 
 const error_ntlgn = () => {
+            localStorage.removeItem('token')
+            localStorage.removeItem('username')
+
             InfoSection.style.display = 'block';
             dataContainer.innerHTML = 'You are not login.Please login'
-
+            loginWrp.style.display = 'block'
+            userSection.style.display = 'none'
+            welcome.innerHTML = ''
 }
 
 currentUser()

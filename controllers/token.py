@@ -1,13 +1,13 @@
 
 from datetime import datetime, timedelta
-from fastapi import HTTPException, Depends,status
+from fastapi import HTTPException, Depends, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from model.core import User
 from secure import oauth2_schema
 from typing import Optional
-from model.database import SessionLocal, engine
+from model.database import SessionLocal
 import jwt
 
 SECRET_KEY = '52367badbf4e42f3a94d9ce456e1f01cbfee36a604da5c9589fa84f0bb9e661b'
