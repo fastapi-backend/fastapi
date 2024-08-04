@@ -6,13 +6,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from controllers import token
+from controllers.token import get_current_user
 from controllers.users import register
 from model import crud, core, schemas
 from model.core import User
 from model.database import SessionLocal, engine
 from secure import pwd_context, oauth2_schema
 
-from views.users import get_user_by_token
 
 core.Base.metadata.create_all(bind=engine)
 router = APIRouter()
@@ -56,6 +56,7 @@ async def get_token(request: OAuth2PasswordRequestForm = Depends(),
 
 
 @router.get("/profile/", response_model=schemas.User)
-def login_profile(oauth: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
-    return get_user_by_token(db=db)
+async def get_user(db: Session = Depends(get_db), current_user: schemas.UserBase = Depends(get_current_user)):
+    return current_user
+
         
