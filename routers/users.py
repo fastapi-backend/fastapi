@@ -28,8 +28,8 @@ def get_db():
 
 
 @router.get("/users/", response_model=list[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
+def read_users(skip: int = 0, db: Session = Depends(get_db)):
+    users = crud.get_users(db, skip=skip)
     return users
 
 
@@ -52,6 +52,7 @@ async def get_token(request: OAuth2PasswordRequestForm = Depends(),
     return {
         'access_token': access_token,
         'token_type': 'bearer',
+        'username': user.email,
     }
 
 
