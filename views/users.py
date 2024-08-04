@@ -4,13 +4,13 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_401_UNAUTHORIZED
 
 
-from model.core import Token
+from model.core import User
 
 
-def get_user_by_token(access_token: str, db: Session):
-    token = db.scalar(select(Token).where(Token.access_token == access_token))
-    if token:
-        return token.user
+def get_user_by_token(db: Session):
+    user: User = db.scalar(select(User))
+    if user:
+        return user
     else:
         raise HTTPException(
             status_code=HTTP_401_UNAUTHORIZED,

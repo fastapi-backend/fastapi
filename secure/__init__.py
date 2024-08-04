@@ -1,6 +1,8 @@
 from passlib.context import CryptContext
-from fastapi.security import APIKeyHeader
+from fastapi.security import OAuth2PasswordBearer
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-apikey_scheme = APIKeyHeader(name="Authorization")
+oauth2_schema = OAuth2PasswordBearer(tokenUrl='/test/token/')
+
+
