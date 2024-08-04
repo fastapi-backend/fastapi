@@ -1,17 +1,15 @@
 
 
-from fastapi import Depends, FastAPI, HTTPException, APIRouter, status
+from fastapi import Depends, HTTPException, APIRouter, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from controllers import token
-from controllers.token import login
 from controllers.users import register
 from model import crud, core, schemas
 from model.core import User
 from model.database import SessionLocal, engine
-from model.schemas import UserCreate
 from secure import pwd_context, oauth2_schema
 from typing import Annotated
 
@@ -41,11 +39,6 @@ def register_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     return register(db=db, user_data=user_data)
 
 
-@router.post("/users/login", response_model=schemas.Token, status_code=201)
-def login_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
-    return login(db=db, user_data=user_data)
-
-
 @router.post('/token/', status_code=201)
 async def get_token(request: OAuth2PasswordRequestForm = Depends(),
                     db: Session = Depends(get_db)):
@@ -60,11 +53,10 @@ async def get_token(request: OAuth2PasswordRequestForm = Depends(),
     return {
         'access_token': access_token,
         'token_type': 'bearer',
-        # 'user_id': user.id,
     }
 
 
 @router.get("/profile/", response_model=schemas.User)
-def login_profile(access_token: Annotated[str, Depends(oauth2_schema)], db: Session = Depends(get_db)):
+def login_profile(oauth: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
     return get_user_by_token(db=db)
         
