@@ -36,13 +36,19 @@ const error_notfound = () => {
 
 }
 
+const error_ntlgn = () => {
+            InfoSection.style.display = 'block';
+            dataContainer.innerHTML = 'You are not login.Please login'
+
+}
+
 currentUser()
 
 logoutBtn.addEventListener('click', () => {
     localStorage.removeItem('token')
     localStorage.removeItem('username')
 
-    InfoSection.style.display = 'block';
+    InfoSection.style.display = 'none';
     dataContainer.innerHTML = ''
     loginWrp.style.display = 'block'
     userSection.style.display = 'none'
@@ -52,6 +58,8 @@ logoutBtn.addEventListener('click', () => {
 
 loginBtn.addEventListener('click', () => {
     let formData = new FormData()
+    InfoSection.style.display = 'none';
+    dataContainer.innerHTML = ''
     formData.append('username', usernameInput.value)
     formData.append('password', passwordInput.value)
 
@@ -76,7 +84,8 @@ fetch('http://127.0.0.1:8000/test/token/', {
     })
     .then(data => {
         console.log(data)
-
+        InfoSection.style.display = 'none';
+        dataContainer.innerHTML = ''
         localStorage.setItem('token', data.access_token)
         localStorage.setItem('username', data.username)
 
@@ -99,8 +108,7 @@ Profile_token.addEventListener('click', () => {
             // Authorization: `Bearer ${token}`
             Authorization: `Bearer ${localStorage.getItem('token') }`
         },
-    })
-        .then(response => response.json())
+    })  .then(response => response.json())
         .then(data => {
             InfoSection.style.display = 'block';
             dataContainer.innerHTML = ''
@@ -117,7 +125,12 @@ Profile_token.addEventListener('click', () => {
 
 
 
-        .catch(error => console.error(error))
+        .catch(error => {
+            console.error(error)
+            error_ntlgn()
+            console.log('You are not login.Please login.')
+        })
+
         })
 
 
