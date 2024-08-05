@@ -49,14 +49,14 @@ def get_current_user(oauth2: str = Depends(oauth2_schema), db: Session = Depends
 
         if decode_username is None:
             raise credentials_exeption
-    except HTTPException:
+
+        user: User = db.scalar(select(User).where(User.email == decode_username))
+
+        if user is None:
+            raise credentials_exeption
+
+        return user
+
+    except Exception:
         raise credentials_exeption
-
-    user: User = db.scalar(select(User).where(User.email == decode_username))
-
-    if user is None:
-        raise credentials_exeption
-
-    return user
-
 

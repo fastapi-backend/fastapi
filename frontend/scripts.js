@@ -106,15 +106,28 @@ const Profile_token = document.querySelector('#get-profile-token')
 
 
 let token = localStorage.getItem('token')
-
 Profile_token.addEventListener('click', () => {
-    fetch(`http://127.0.0.1:8000/test/profile`, {
-        headers: {
-            // Authorization: `Bearer ${token}`
-            Authorization: `Bearer ${localStorage.getItem('token') }`
+  fetch('http://127.0.0.1:8000/test/profile', {
+    headers: {
+      Authorization: localStorage.getItem('token')
+        ? `Bearer ${localStorage.getItem('token')}`
+        : undefined
+
         },
-    })  .then(response => response.json())
-        .then(data => {
+    })
+    .then(response => {
+        if (!response.ok) {
+            if (response.status === 401){
+                error_ntlgn()
+                console.log('You are not login.Please login')
+            }
+
+
+            throw new Error('Network response was not ok.');
+        }
+        return response.json();
+    })
+    .then(data => {
             InfoSection.style.display = 'block';
             dataContainer.innerHTML = ''
             for (const key in data) {
@@ -132,8 +145,6 @@ Profile_token.addEventListener('click', () => {
 
         .catch(error => {
             console.error(error)
-            error_ntlgn()
-            console.log('You are not login.Please login.')
         })
 
         })

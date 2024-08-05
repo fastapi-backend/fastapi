@@ -57,6 +57,9 @@ async def get_token(request: OAuth2PasswordRequestForm = Depends(),
 
 @router.get("/profile/", response_model=schemas.User)
 async def get_user(db: Session = Depends(get_db), current_user: schemas.UserBase = Depends(get_current_user)):
-    return current_user
+    try:
+        return current_user
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Login please')
 
         
