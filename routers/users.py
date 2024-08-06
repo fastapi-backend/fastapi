@@ -93,7 +93,7 @@ async def open_user(db: Session = Depends(get_db), current_user: schemas.UserBas
 
 @router.delete("/delete-you-user")
 async def delete_you_user(current_user: schemas.UserBase = Depends(get_current_user),db: Session = Depends(get_db)):
-    delete = db.scalar(select(User).where(User.email == current_user.email))
+    delete: User = db.scalar(select(User).where(User.email == current_user.email))
     if not delete:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
     db.delete(delete)
