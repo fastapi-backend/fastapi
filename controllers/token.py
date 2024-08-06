@@ -60,3 +60,7 @@ def get_current_user(oauth2: str = Depends(oauth2_schema), db: Session = Depends
     except Exception:
         raise credentials_exeption
 
+
+
+
+

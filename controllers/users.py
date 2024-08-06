@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from starlette.status import HTTP_400_BAD_REQUEST
 
 from model.core import User
-from model.schemas import UserCreate
+from model.schemas import UserCreate, Connect
 from secure import pwd_context
 
 
@@ -19,3 +19,5 @@ def register(db: Session, user_data: UserCreate):
     db.add(user)
     db.commit()
     return user
+
+

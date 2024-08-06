@@ -9,7 +9,7 @@ from controllers import token
 from controllers.token import get_current_user
 from controllers.users import register
 from model import crud, schemas
-from model.core import User
+from model.core import User, Item
 from model.database import SessionLocal
 from secure import pwd_context
 
@@ -62,4 +62,72 @@ async def get_user(db: Session = Depends(get_db), current_user: schemas.UserBase
     except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Login please')
 
-        
+
+@router.put("/user-is0")
+async def close_user(db: Session = Depends(get_db), current_user: schemas.UserBase = Depends(get_current_user)):
+    try:
+        if current_user.is_active == 1:
+            user: User = db.scalar(select(User).where(User.email == current_user.email))
+            user.is_active = 0
+            db.commit()
+        else:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='You account is busy')
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f'{e}')
+
+
+@router.put("/user-is1")
+async def open_user(db: Session = Depends(get_db), current_user: schemas.UserBase = Depends(get_current_user)):
+    try:
+        if current_user.is_active == 0:
+            user: User = db.scalar(select(User).where(User.email == current_user.email))
+            user.is_active = 1
+            db.commit()
+        else:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='You account is not busy')
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f'{e}')
+
+
+@router.delete("/delete-you-user")
+async def delete_you_user(current_user: schemas.UserBase = Depends(get_current_user),db: Session = Depends(get_db)):
+    delete = db.scalar(select(User).where(User.email == current_user.email))
+    if not delete:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
+    db.delete(delete)
+    db.commit()
+    return {
+        'deleted you user': current_user.email
+    }
+    # The front end should remove the client's jwt from memory or another location
+
+
+@router.post("/create-item")
+async def create_item(itemuserdata: schemas.ItemBase, db: Session = Depends(get_db), current_user: schemas.UserBase = Depends(get_current_user)):
+    db.scalar(select(Item))
+    item = Item(owner_id=current_user.id)
+    item.title = itemuserdata.title
+    item.description = itemuserdata.description
+    db.add(item)
+    db.commit()
+    return {
+        'created item from id user': current_user.id,
+        'item id': item.id,
+    }
+
+
+@router.delete("/delete-item")
+async def delete_item(userdata: schemas.ItemDel, current_user: schemas.UserBase = Depends(get_current_user), db: Session = Depends(get_db)):
+
+    valid: Item = db.scalar(select(Item).where(Item.id == userdata.id))
+    if valid.owner_id == current_user.id:
+        db.delete(valid)
+        db.commit()
+    else:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You cannot delete an item that is not yours")
+
+    return {
+        'deleted you item': userdata.id
+    }

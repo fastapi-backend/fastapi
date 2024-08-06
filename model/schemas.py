@@ -10,6 +10,13 @@ class ItemCreate(ItemBase):
     pass
 
 
+class ItemDel(BaseModel):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 class Item(ItemBase):
     id: int
     owner_id: int
@@ -31,6 +38,13 @@ class UserCreate(UserBase):
 
 class LiteUser(UserBase):
     id: int
+
+    class Config:
+        orm_mode = True
+
+
+class Connect(BaseModel):
+    auth: str
 
     class Config:
         orm_mode = True
