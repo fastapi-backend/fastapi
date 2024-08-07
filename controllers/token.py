@@ -2,8 +2,7 @@
 from datetime import datetime, timedelta
 from fastapi import HTTPException, Depends, status
 from sqlalchemy import select
-from sqlalchemy.orm import Session
-
+from sqlalchemy.ext.asyncio import AsyncSession as Session
 from model.core import User
 from secure import oauth2_schema
 from typing import Optional
@@ -16,12 +15,13 @@ ALGORITHM = 'HS256'
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-def get_db():
+# Dependency
+async def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
-        db.close()
+        await db.close()
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
@@ -37,7 +37,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-def get_current_user(oauth2: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
+async def get_current_user(oauth2: str = Depends(oauth2_schema), db: Session = Depends(get_db)):
     credentials_exeption = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail='Could not validate credentials',
@@ -51,7 +51,7 @@ def get_current_user(oauth2: str = Depends(oauth2_schema), db: Session = Depends
         if decode_username is None:
             raise credentials_exeption
 
-        user: User = db.scalar(select(User).where(User.email == decode_username))
+        user: User = await db.scalar(select(User).where(User.email == decode_username))
 
         if user is None:
             raise credentials_exeption

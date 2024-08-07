@@ -1,7 +1,8 @@
 fastapi
 uvicorn[standard]
-sqlalchemy
+sqlalchemy[asyncio]
 psycopg2
+asyncpg
 alembic
 passlib
 bcrypt
