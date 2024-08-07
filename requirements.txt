@@ -70,8 +70,6 @@ mdurl==0.1.2
     # via markdown-it-py
 passlib==1.7.4
     # via -r requirements.in
-psycopg2==2.9.9
-    # via -r requirements.in
 pydantic==2.8.2
     # via fastapi
 pydantic-core==2.20.1
