@@ -21,6 +21,6 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String, index=True)
     description = Column(String, index=True)
+    view = Column(Integer, default=0)
     owner_id = Column(Integer, ForeignKey("users.id"))
-
     owner = relationship("User", back_populates="items")

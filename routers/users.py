@@ -2,7 +2,7 @@
 
 from fastapi import Depends, HTTPException, APIRouter, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession as Session
 from controllers import token
 from controllers.token import get_current_user
@@ -25,7 +25,43 @@ async def get_db():
         await db.close()
 
 
-@router.post("/users/register", status_code=201)
+@router.get("/{item_id}")
+async def read_item(item_id: int, db: Session = Depends(get_db)):
+    item: Item = await db.scalar(select(Item).where(Item.id == item_id))
+    if not item:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="item not found")
+    item.view = item.view + 1
+    await db.commit()
+    await db.refresh(item)
+    return item
+
+
+
+@router.get("/popular/")   
+async def most_popular_items(amount: int, db: Session = Depends(get_db)):   
+    popular = await db.execute(select(Item).order_by((Item.view.desc()),(Item.id.desc())).limit(amount))
+    return popular.scalars().all()
+
+
+@router.get("/new/")   
+async def new_items(amount: int, db: Session = Depends(get_db)):   
+    new = await db.execute(select(Item).order_by((Item.id.desc())).limit(amount))
+    return new.scalars().all()
+
+
+@router.get("/old/")   
+async def old_items(amount: int, db: Session = Depends(get_db)):   
+    old = await db.execute(select(Item).order_by((Item.id)).limit(amount))
+    return old.scalars().all()
+
+
+@router.get("/dont-popular/")   
+async def dont_popular_items(amount: int, db: Session = Depends(get_db)):   
+    dont_popular = await db.execute(select(Item).order_by((Item.view)).limit(amount))
+    return dont_popular.scalars().all()
+
+
+@router.post("/users/register", response_model=schemas.UserCreate, status_code=201)
 async def register_user(user_data: schemas.UserCreate, db: Session = Depends(get_db)):
     return await register(db=db, user_data=user_data)
 

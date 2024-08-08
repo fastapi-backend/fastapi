@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from routers.items import router as items_router
 from routers.users import router as users_router
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
@@ -14,11 +13,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-app.include_router(
- router=items_router,
- prefix='/items',)
 
 
 app.include_router(
